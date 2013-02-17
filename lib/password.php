@@ -46,7 +46,8 @@ if (!defined('PASSWORD_BCRYPT')) {
 					}
 				}
 				$required_salt_len = 22;
-				$hash_format = sprintf("$2y$%02d$", $cost);
+				$prefix = password_get_prefix();
+				$hash_format = sprintf("$%s$%02d$", $prefix, $cost);
 				break;
 			default:
 				trigger_error(sprintf("password_hash(): Unknown password hashing algorithm: %s", $algo), E_USER_WARNING);
@@ -154,10 +155,11 @@ if (!defined('PASSWORD_BCRYPT')) {
 			'algoName' => 'unknown',
 			'options' => array(),
 		);
-		if (substr($hash, 0, 4) == '$2y$' && strlen($hash) == 60) {
+		$prefix = '$'.password_get_prefix().'$';
+		if (substr($hash, 0, 4) == $prefix && strlen($hash) == 60) {
 			$return['algo'] = PASSWORD_BCRYPT;
 			$return['algoName'] = 'bcrypt';
-			list($cost) = sscanf($hash, "$2y$%d$");
+			list($cost) = sscanf($hash, $prefix."%d$");
 			$return['options']['cost'] = $cost;
 		}
 		return $return;
@@ -215,6 +217,16 @@ if (!defined('PASSWORD_BCRYPT')) {
 
 		return $status === 0;
 	}
+
+	/**
+	 * Determine the prefix for this password based on the 
+	 * PASSWORD_COMPAT_2A flag.
+	 */
+	function password_get_prefix(){
+		return defined(PASSWORD_COMPAT_2A) && PASSWORD_COMPAT_2A 
+						? '2y' : '2a';
+	}
+
 }
 
 

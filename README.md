@@ -1,7 +1,9 @@
 password_compat
 ===============
 
-[![Build Status](https://travis-ci.org/ircmaxell/password_compat.png?branch=master)](https://travis-ci.org/ircmaxell/password_compat)
+**Note:**
+This fork changes the requirement for `$2y` to be `$2a` when set with the `define('PASSWORD_COMPAT_2A', true)` flag is set. The backported fix in the Debian 5.3.3+squeeze14 package (see [the patch](http://patch-tracker.debian.org/patch/series/view/php5/5.3.3-7+squeeze14/CVE-2011-2483.patch)) does not introduce the new `$2y` prefix, however it *does* correct the bug under the existing prefix
+
 
 This library is intended to provide forward compatibility with the password_* functions being worked on for PHP 5.5.
 
